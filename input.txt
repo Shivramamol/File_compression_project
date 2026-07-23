@@ -1,2 +1,4 @@
 hello Huffman coding!
 This is my first compression project
+Hello world!
+This is some new content
