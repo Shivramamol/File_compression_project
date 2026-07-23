@@ -5,12 +5,19 @@
 using namespace std;
 
 int main() {
-    fstream file("input.txt");
+    fstream file("C:\\users\\ishaa\\downloads\\DSE26101519 Application Print.pdf");
 
     if(!file) {
         cout << "File doesn't exist." << endl;
         return 1;
     }
+
+    file.seekg(0, ios::end);
+    streamsize size = file.tellg();
+    cout << "File size: " << size << " bytes" << endl;
+    file.seekg(0, ios::beg);
+
+    cout << endl;
 
     cout << "Contents of file: " << endl;
     char ch;
