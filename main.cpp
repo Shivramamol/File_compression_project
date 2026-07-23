@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include <iomanip>
 #include <map>
 #include <queue>
 #include <bitset>
@@ -145,11 +146,13 @@ int main() {
 
         auto input_file_size = filesystem::file_size(input_file);
         auto output_file_size = filesystem::file_size(output_file);
+        auto size_difference = input_file_size - output_file_size;
+        double difference_ratio = (static_cast<double>(size_difference) / input_file_size) * 100.0;
 
         cout << "File compressed successfully." << endl << endl;
         cout << "Original file size: " << input_file_size << " bytes" << endl;
         cout << "Compressed file size: " << output_file_size << " bytes" << endl;
-        cout << "Saved space: " << input_file_size - output_file_size << " bytes" << endl;
+        cout << fixed << "Saved space: " << size_difference << " bytes (" << setprecision(2) << difference_ratio << "%)" << endl;
     } else {
         cout << "File opening failed." << endl;
     }
