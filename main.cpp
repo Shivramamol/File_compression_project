@@ -147,7 +147,7 @@ int main() {
         cout << "Original file size: " << filesystem::file_size(input_file) << " bytes" << endl;
         cout << "Compressed file size: " << filesystem::file_size(output_file) << " bytes" << endl;
     } else {
-        cout << "File cannot be compressed due to some error." << endl;
+        cout << "File opening failed." << endl;
     }
     
     return 0;
