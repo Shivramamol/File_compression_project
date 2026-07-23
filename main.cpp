@@ -9,11 +9,11 @@ using namespace std;
 
 struct Node {
     char ch;
-    int freq;
+    size_t freq;
     struct Node* left;
     struct Node* right;
 
-    Node(char c, int f) {
+    Node(char c, size_t f) {
         ch = c;
         freq = f;
         left = right = nullptr;
@@ -30,7 +30,7 @@ struct Compare {
     }
 };
 
-void generateHuffmanCodes(Node* root, string code, map<char, string>& codes) {
+void generateHuffmanCodes(Node* root, string code, map<unsigned char, string>& codes) {
     if (root == nullptr) return;
 
     if (root->left == nullptr && root->right == nullptr) {
@@ -43,10 +43,10 @@ void generateHuffmanCodes(Node* root, string code, map<char, string>& codes) {
 }
 
 int main() {
-    string input_file = "README.md";
+    string input_file = "large_input.txt";
     string output_file = input_file + "_compressed.huff";
 
-    fstream file(input_file);
+    ifstream file(input_file, ios::binary);
 
     if(!file) {
         cout << "File doesn't exist." << endl;
@@ -54,7 +54,7 @@ int main() {
     }
 
     char ch;
-    map<char, int> freq_map;
+    map<unsigned char, size_t> freq_map;
     while(file.get(ch))
         freq_map[ch]++;
     
@@ -69,14 +69,14 @@ int main() {
         heap.pop();
         Node* right = heap.top();
         heap.pop();
-        int sumFreq = left->freq + right->freq;
+        size_t sumFreq = left->freq + right->freq;
         Node* parent = new Node('\0', sumFreq);
         parent->left = left;
         parent->right = right;
         heap.push(parent);
     }
 
-    map<char, string> huffmanCodes;
+    map<unsigned char, string> huffmanCodes;
     generateHuffmanCodes(heap.top(), "", huffmanCodes);
     
     file.clear();
@@ -110,7 +110,7 @@ int main() {
 
         for (auto& pair : freq_map) {
             char ch = pair.first;
-            int freq = pair.second;
+            size_t freq = pair.second;
             compressed_file.write(&ch, sizeof(ch));
             compressed_file.write(reinterpret_cast<char*>(&freq), sizeof(freq));
         }
@@ -143,9 +143,13 @@ int main() {
 
         compressed_file.close();
 
+        auto input_file_size = filesystem::file_size(input_file);
+        auto output_file_size = filesystem::file_size(output_file);
+
         cout << "File compressed successfully." << endl << endl;
-        cout << "Original file size: " << filesystem::file_size(input_file) << " bytes" << endl;
-        cout << "Compressed file size: " << filesystem::file_size(output_file) << " bytes" << endl;
+        cout << "Original file size: " << input_file_size << " bytes" << endl;
+        cout << "Compressed file size: " << output_file_size << " bytes" << endl;
+        cout << "Saved space: " << input_file_size - output_file_size << " bytes" << endl;
     } else {
         cout << "File opening failed." << endl;
     }
