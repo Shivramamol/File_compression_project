@@ -1,0 +1,2 @@
+hello Huffman coding!
+This is my first compression project
