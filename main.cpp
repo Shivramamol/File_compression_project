@@ -4,7 +4,6 @@
 #include <iomanip>
 #include <map>
 #include <queue>
-#include <bitset>
 
 using namespace std;
 
@@ -54,6 +53,8 @@ int main() {
         return 1;
     }
 
+    cout << "Compressing file..." << endl;
+
     char ch;
     map<unsigned char, size_t> freq_map;
     while(file.get(ch))
@@ -61,7 +62,7 @@ int main() {
     
     priority_queue<Node*, vector<Node*>, Compare> heap;
     for (const auto& pair : freq_map) {
-        Node *newNode = new Node(pair.first, pair.second);
+        Node* newNode = new Node(pair.first, pair.second);
         heap.push(newNode);
     }
 
@@ -93,7 +94,7 @@ int main() {
     if(compressed_file.is_open()) {
         /* Format of compressed file:
         ---------------------------------
-        1. Number of unique characters
+        1. Number of unique characters & Frequency map
             Character 1
             Frequency 1
             ...
@@ -149,7 +150,7 @@ int main() {
         auto size_difference = input_file_size - output_file_size;
         double difference_ratio = (static_cast<double>(size_difference) / input_file_size) * 100.0;
 
-        cout << "File compressed successfully." << endl << endl;
+        cout << "File compressed successfully." << endl;
         cout << "Original file size: " << input_file_size << " bytes" << endl;
         cout << "Compressed file size: " << output_file_size << " bytes" << endl;
         cout << fixed << "Saved space: " << size_difference << " bytes (" << setprecision(2) << difference_ratio << "%)" << endl;
