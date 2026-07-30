@@ -80,19 +80,6 @@ int main() {
 
     map<unsigned char, string> huffmanCodes;
     generateHuffmanCodes(heap.top(), "", huffmanCodes);
-    cout << "\nCompressor Codes:\n";
-
-for (auto &p : huffmanCodes)
-{
-    if (p.first == ' ')
-        cout << "SPACE";
-    else if (p.first == '\n')
-        cout << "NEWLINE";
-    else
-        cout << p.first;
-
-    cout << " : " << p.second << endl;
-}
     
     file.clear();
     file.seekg(0, ios::beg);
@@ -100,14 +87,7 @@ for (auto &p : huffmanCodes)
     while (file.get(ch)) {
         newContent += huffmanCodes[ch];
     }
-    cout << "\nFirst 100 encoded bits:\n";
 
-for(int i = 0; i < 100 && i < newContent.length(); i++)
-{
-    cout << newContent[i];
-}
-
-cout << endl;
     size_t bitlength = newContent.length();
     file.close();
 
