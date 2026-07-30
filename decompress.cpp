@@ -3,6 +3,7 @@
 #include<iomanip>
 #include<map>
 #include<queue>
+#include <vector>
 
 using namespace std;
 
@@ -15,7 +16,7 @@ struct Node{
     Node *right;
 
     Node(char c,size_t frequency){
-        char ch=c;
+         this->ch=c;
         this->frequency=frequency;
         left=right=nullptr;
     }
@@ -30,6 +31,16 @@ struct Compare{
         return l->frequency>r->frequency;
     }
 };
+ void deleteTree(Node* root)
+    {
+    if(root == nullptr)
+        return;
+
+    deleteTree(root->left);
+    deleteTree(root->right);
+
+    delete root;
+    }
 
 int main()
 {
@@ -67,11 +78,65 @@ int main()
             Node *right=minHeap.top();
             minHeap.pop();
 
-            Node *parent = new Node('/0', left->frequency + right->frequency);
+            Node *parent = new Node('\0', left->frequency + right->frequency);
             parent->left=left;
             parent->right=right;
             minHeap.push(parent);
 
     }
-}
+
+    Node *root = minHeap.top();
+
+    size_t bitlength;
+    file.read(reinterpret_cast<char*>(&bitlength),sizeof(bitlength));
+
+    vector<unsigned char> compressed_data;
+
+    unsigned char byte;
+    while(file.read(reinterpret_cast<char*>(&byte),1)){
+        compressed_data.push_back(byte);
+    }
+
+    ofstream output(outputFile,ios::binary);
+    if(!output){
+        cout<<"cannot create the decompressed file";
+        return 1;
+    }
+
+    Node *current=root;
+
+    size_t bitsread = 0;
+    for(unsigned char byte : compressed_data){
+        for(int i = 7;i>=0;i++){
+            if(bitsread==bitlength){
+                break;
+            }
+            bool bit = (byte >> i) & 1;
+            if(bit==0){
+                current = current->left;
+            }
+            else{
+                current = current->right;
+            }
+            if(current->left==nullptr && current->right==nullptr){
+                output.put(current->ch);
+                current = root;
+            }
+            bitsread++;
+        }
+        if(bitsread==bitlength)
+        break;
+    }
+    output.close();
+    file.close();
+
+    cout<<"file decompression successfull"<<endl;
+
+ 
+    deleteTree(root);
+    return 0;
+
+
+}   
+
 
