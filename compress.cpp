@@ -43,7 +43,7 @@ void generateHuffmanCodes(Node* root, string code, map<unsigned char, string>& c
 }
 
 int main() {
-    string input_file = "large_input.txt";
+    string input_file = "input.txt";
     string output_file = input_file + "_compressed.huff";
 
     ifstream file(input_file, ios::binary);
