@@ -4,6 +4,7 @@
 #include<map>
 #include<queue>
 #include <vector>
+#include <bitset>
 
 using namespace std;
 
@@ -41,6 +42,20 @@ struct Compare{
 
     delete root;
     }
+    void generateHuffmanCodes(Node* root, string code, map<unsigned char, string>& codes)
+{
+    if (root == nullptr)
+        return;
+
+    if (root->left == nullptr && root->right == nullptr)
+    {
+        codes[root->ch] = code;
+        return;
+    }
+
+    generateHuffmanCodes(root->left, code + "0", codes);
+    generateHuffmanCodes(root->right, code + "1", codes);
+}
 
 int main()
 {
@@ -65,6 +80,8 @@ int main()
         file.read(reinterpret_cast<char*>(&freq),sizeof(freq));
         freq_map[ch] = freq;
     }
+    cout << "Frequency Table:\n";
+
 
     priority_queue<Node*,vector<Node*>,Compare> minHeap;
 
@@ -84,8 +101,29 @@ int main()
             minHeap.push(parent);
 
     }
+    
 
     Node *root = minHeap.top();
+//cout << "Root frequency = " << root->frequency << endl;
+    map<unsigned char, string> huffmanCodes;
+generateHuffmanCodes(root, "", huffmanCodes);
+cout << "\n========== DECOMPRESSOR HUFFMAN CODES ==========\n";
+
+for (const auto &pair : huffmanCodes)
+{
+    if (pair.first == ' ')
+        cout << "[SPACE]";
+    else if (pair.first == '\n')
+        cout << "[NEWLINE]";
+    else if (pair.first == '\t')
+        cout << "[TAB]";
+    else
+        cout << pair.first;
+
+    cout << " -> " << pair.second << endl;
+}
+
+cout << "===============================================\n";
 
     size_t bitlength;
     file.read(reinterpret_cast<char*>(&bitlength),sizeof(bitlength));
@@ -96,37 +134,67 @@ int main()
     while(file.read(reinterpret_cast<char*>(&byte),1)){
         compressed_data.push_back(byte);
     }
+cout << "\nBits read from file:\n";
 
+int printed = 0;
+
+for(unsigned char b : compressed_data)
+{
+    for(int i = 7; i >= 0; i--)
+    {
+        if(printed == 100)
+            break;
+
+        cout << ((b >> i) & 1);
+
+        printed++;
+    }
+
+    if(printed == 100)
+        break;
+}
+
+cout << endl;
     ofstream output(outputFile,ios::binary);
     if(!output){
         cout<<"cannot create the decompressed file";
         return 1;
     }
 
-    Node *current=root;
+    Node *current = root;
+string path = "";
 
-    size_t bitsread = 0;
-    for(unsigned char byte : compressed_data){
-        for(int i = 7;i>=0;i++){
-            if(bitsread==bitlength){
-                break;
-            }
-            bool bit = (byte >> i) & 1;
-            if(bit==0){
-                current = current->left;
-            }
-            else{
-                current = current->right;
-            }
-            if(current->left==nullptr && current->right==nullptr){
-                output.put(current->ch);
-                current = root;
-            }
-            bitsread++;
+size_t bitsread = 0;
+
+for (unsigned char byte : compressed_data)
+{
+    for (int i = 7; i >= 0; i--)
+    {
+        if (bitsread == bitlength)
+            break;
+
+        bool bit = (byte >> i) & 1;
+
+        path += (bit ? '1' : '0');
+
+        if (bit)
+            current = current->right;
+        else
+            current = current->left;
+
+        if (current->left == nullptr && current->right == nullptr)
+        {
+            cout << path << " -> " << current->ch << endl;
+
+            output.put(current->ch);
+
+            current = root;
+            path.clear();
         }
-        if(bitsread==bitlength)
-        break;
+
+        bitsread++;
     }
+}
     output.close();
     file.close();
 
