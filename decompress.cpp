@@ -72,7 +72,10 @@ int main()
 
     priority_queue<Node*,vector<Node*>,Compare> minHeap;
 
-    
+    for(const auto &pair : freq_map)
+{
+    minHeap.push(new Node(pair.first, pair.second));
+}
     while(minHeap.size()>1){
             Node *left=minHeap.top();
             minHeap.pop();
