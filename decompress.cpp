@@ -5,6 +5,7 @@
 #include<queue>
 #include <vector>
 #include <bitset>
+#include "decompress.h"
 
 using namespace std;
 
@@ -44,16 +45,13 @@ struct Compare{
     delete root;
     }
     
-int main()
+void decompress(const string& inputFile, const string& outputFile)
 {
-    string inputFile="input.txt_compressed.huff";
-    string outputFile="decompressed.txt";
-
     ifstream file(inputFile,ios::binary);
 
     if(!file){
         cout<<"Error opening the compressed file"<<endl;
-        return 1;
+        return;
     }
 
     size_t uniqueChars;
@@ -67,8 +65,6 @@ int main()
         file.read(reinterpret_cast<char*>(&freq),sizeof(freq));
         freq_map[ch] = freq;
     }
-    
-
 
     priority_queue<Node*,vector<Node*>,Compare> minHeap;
 
@@ -106,7 +102,7 @@ cout << endl;
     ofstream output(outputFile,ios::binary);
     if(!output){
         cout<<"cannot create the decompressed file";
-        return 1;
+        return;
     }
 
     Node *current=root;
@@ -140,9 +136,5 @@ cout << endl;
 
  
     deleteTree(root);
-    return 0;
-
-
+    return;
 }   
-
-

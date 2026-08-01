@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <map>
 #include <queue>
+#include "compress.h"
 
 using namespace std;
 
@@ -42,15 +43,14 @@ void generateHuffmanCodes(Node* root, string code, map<unsigned char, string>& c
     generateHuffmanCodes(root->right, code+"1", codes);
 }
 
-int main() {
-    string input_file = "input.txt";
+void compress(const string& input_file) {
     string output_file = input_file + "_compressed.huff";
 
     ifstream file(input_file, ios::binary);
 
     if(!file) {
         cout << "File doesn't exist." << endl;
-        return 1;
+        return;
     }
 
     cout << "Compressing file..." << endl;
@@ -159,5 +159,5 @@ int main() {
         cout << "File opening failed." << endl;
     }
     
-    return 0;
+    return;
 }
