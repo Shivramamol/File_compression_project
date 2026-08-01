@@ -19,15 +19,15 @@ int main() {
     if (choice == 1) {
         string input_file;
         cout << "Enter file path: ";
-        cin >> input_file;
+        getline(cin, input_file);
         compress(input_file);
     }
     else if (choice == 2) {
         string input_file, output_file;
         cout << "Enter compressed file path: ";
-        cin >> input_file;
+        getline(cin, input_file);
         cout << "Enter output file path: ";
-        cin >> output_file;
+        getline(cin, output_file);
         decompress(input_file, output_file);
     }
 
